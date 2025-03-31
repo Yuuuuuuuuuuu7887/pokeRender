@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PBN File Analyzer</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 80%; margin: auto; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PBN File Analyzer</h1>
+        <form action="/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".pbn">
+            <button type="submit">Upload</button>
+        </form>
+        
+        {% if boards %}
+            <h2>Boards Analysis</h2>
+            {% for board in boards %}
+                <h3>Board {{ board.board_number }} (Dealer: {{ board.dealer }})</h3>
+                <pre>
+{% for direction, suits in board.hands.items() %}{{ direction }}:
+    C: {{ " ".join(suits['C']) }}
+    D: {{ " ".join(suits['D']) }}
+    H: {{ " ".join(suits['H']) }}
+    S: {{ " ".join(suits['S']) }}
+{% endfor %}
+                </pre>
+            {% endfor %}
+        {% endif %}
+
+        {% if card_positions %}
+            <h2>Card Positions</h2>
+            {% for i in range(boards|length) %}
+                <h3>Board {{ boards[i].board_number }}</h3>
+                <pre>
+{% for suit, ranks in card_positions[i].items() %}{{ suit }}:
+{% for rank, positions in ranks.items() %}    {{ rank }} -> {{ ", ".join(positions) }}
+{% endfor %}
+{% endfor %}
+                </pre>
+            {% endfor %}
+        {% endif %}
+        {% if all_card_tracking %}
+    <h2>Card Tracking (All Boards)</h2>
+    <pre>
+{% for card, positions in all_card_tracking.items() %}{{ card }}={{ positions }}
+{% endfor %}
+    </pre>
+{% endif %}
+
+    </div>
+</body>
+</html>
